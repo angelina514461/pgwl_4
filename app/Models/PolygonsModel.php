@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class PolylygonsModel extends Model
+class PolygonsModel extends Model
 {
     protected $table = 'polygons';
 
