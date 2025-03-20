@@ -26,31 +26,32 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="POST" action="{{ route('points.store') }}">
-                <div class="modal-body">
+                    <div class="modal-body">
                         @csrf
 
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Fill point name">
-                          </div>
+                            <input type="text" class="form-control" id="name" name="name"
+                                placeholder="Fill point name">
+                        </div>
 
-                          <div class="mb-3">
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                          </div>
+                        </div>
 
-                          <div class="mb-3">
+                        <div class="mb-3">
                             <label for="geom_point" class="form-label">Geometry</label>
                             <textarea class="form-control" id="geom_point" name="geom_point" rows="3"></textarea>
-                          </div>
+                        </div>
 
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -64,31 +65,32 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <form method="POST" action="{{ route('polylines.store') }}">
-                <div class="modal-body">
+                    <div class="modal-body">
                         @csrf
 
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Fill point name">
-                          </div>
+                            <input type="text" class="form-control" id="name" name="name"
+                                placeholder="Fill point name">
+                        </div>
 
-                          <div class="mb-3">
+                        <div class="mb-3">
                             <label for="description" class="form-label">Description</label>
                             <textarea class="form-control" id="description" name="description" rows="3"></textarea>
-                          </div>
+                        </div>
 
-                          <div class="mb-3">
+                        <div class="mb-3">
                             <label for="geom_polyline" class="form-label">Geometry</label>
                             <textarea class="form-control" id="geom_polyline" name="geom_polyline" rows="3"></textarea>
-                          </div>
+                        </div>
 
 
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -145,7 +147,7 @@
     </script>
 
     <script>
-        var map = L.map('map').setView([-7.8041002,110.3643608], 13);
+        var map = L.map('map').setView([-7.8041002, 110.3643608], 13);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -210,6 +212,73 @@
             }
 
             drawnItems.addLayer(layer);
+        });
+
+        // GEOJSON Points
+        var point = L.geoJson(null, {
+            onEachFeature: function(feature, layer) {
+                var popupContent = "Nama: " + feature.properties.name + "<br>" +
+                    "Deskripsi: " + feature.properties.description + "<br>" +
+                    "Dibuat: " + feature.properties.created_at;
+                layer.on({
+                    click: function(e) {
+                        layer.bindPopup(popupContent).openPopup();
+                    },
+                    mouseover: function(e) {
+                        layer.bindTooltip(feature.properties.name).openTooltip();
+                    },
+                });
+            },
+        });
+        $.getJSON("{{ route('api.points') }}", function(data) {
+            point.addData(data);
+            map.addLayer(point);
+        });
+
+        //GeoJSON Polylines
+        var polylines = L.geoJson(null, {
+            onEachFeature: function(feature, layer) {
+                var popupContent = "Nama: " + feature.properties.name + "<br>" +
+                    "Deskripsi: " + feature.properties.description;
+                "Length: " + feature.properties.length_km.toFixed + "<br>" +
+                    "Created: " + feature.properties.created_at;
+                layer.on({
+                    click: function(e) {
+                        polylines.bindPopup(popupContent);
+                    },
+                    mouseover: function(e) {
+                        polylines.bindTooltip(feature.properties.name);
+                    },
+                });
+            },
+        });
+        $.getJSON("{{ route('api.polylines') }}", function(data) {
+            polylines.addData(data);
+            map.addLayer(polylines);
+        });
+
+        //GeoJSON Polygons
+        var polygon = L.geoJson(null, {
+            onEachFeature: function(feature, layer) {
+                var popupContent = "Nama: " + feature.properties.name + "<br>" + "Luas (Hektar): " + feature
+                    .properties
+                    .area_hektar.toFixed(2) + "<br>" + "Luas (Km): " + feature.properties
+                    .area_km.toFixed(2) + "br" + "<br>" + "Luas (M): " + feature.properties
+                    .area_m.toFixed(2) + "br" + "Deskripsi: " + feature.properties.description + "<br>" +
+                    "Dibuat: " + feature.properties.created_at;
+                layer.on({
+                    click: function(e) {
+                        polygon.bindPopup(popupContent);
+                    },
+                    mouseover: function(e) {
+                        polygon.bindTooltip(feature.properties.name);
+                    },
+                });
+            },
+        });
+        $.getJSON("{{ route('api.polygons') }}", function(data) {
+            polygon.addData(data);
+            map.addLayer(polygon);
         });
     </script>
 @endsection
