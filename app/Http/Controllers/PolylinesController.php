@@ -15,7 +15,7 @@ class PolylinesController extends Controller
         $this->polylines = new PolylinesModel();
     }
 
-     public function index()
+    public function index()
     {
         //
     }
@@ -38,7 +38,8 @@ class PolylinesController extends Controller
             [
                 'name' => 'required|unique:polylines,name',
                 'description' => 'required',
-                'geom_polyline' => 'required', // berdasarkan tabel apa dan kolom apa
+                'geom_polyline' => 'required',
+                'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:50',
             ],
             [
                 'name.required' => 'Name is required',
@@ -48,11 +49,27 @@ class PolylinesController extends Controller
             ]
         );
 
-            $data = [
-                'geom' => $request->geom_polyline,
-                'name' => $request->name,
-                'description' => $request->description,
-            ];
+        //Create images directory if not exists
+        if (!is_dir('storage/images')) {
+            mkdir('./storage/images', 0777);
+        }
+
+        // Create image file
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $name_image = time() . "_polyline." . strtolower($image->getClientOriginalExtension());
+            $image->move('storage/images', $name_image);
+        } else {
+            $name_image = null;
+        }
+
+
+        $data = [
+            'geom' => $request->geom_polyline,
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $name_image,
+        ];
 
 
         // create data
