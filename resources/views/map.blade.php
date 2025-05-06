@@ -243,17 +243,26 @@
         // GEOJSON Points
         var point = L.geoJson(null, {
             onEachFeature: function(feature, layer) {
+
+                var routedelete = "{{ route('points.destroy', ':id') }}";
+                routedelete = routedelete.replace(':id', feature.properties.id);
+
                 var popupContent = "Nama: " + feature.properties.name + "<br>" +
                     "Deskripsi: " + feature.properties.description + "<br>" +
                     "Dibuat: " + feature.properties.created_at + "<br>" +
                     "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                    "' width='200' alt=''>";
+                    "' width='200' alt=''>" + "<br>" +
+                    "<form method='POST' action='" + routedelete + "'>" +
+                    '@csrf' + '@method("DELETE")' +
+                    "<button type='submit' class='btn btn-danger btn-sm' onclick='return confirm(`Yakin akan diapus?`)'><i class='fa-solid fa-trash'></i></button>" +
+                    "</form>";
+
                 layer.on({
                     click: function(e) {
-                        layer.bindPopup(popupContent).openPopup();
+                        layer.bindPopup(popupContent);
                     },
                     mouseover: function(e) {
-                        layer.bindTooltip(feature.properties.name).openTooltip();
+                        layer.bindTooltip(feature.properties.name);
                     },
                 });
             },
@@ -266,12 +275,20 @@
         //GeoJSON Polylines
         var polylines = L.geoJson(null, {
             onEachFeature: function(feature, layer) {
+
+                var routedelete = "{{ route('polylines.destroy', ':id') }}";
+                routedelete = routedelete.replace(':id', feature.properties.id);
+
                 var popupContent = "Nama: " + feature.properties.name + "<br>" +
                     "Deskripsi: " + feature.properties.description + "<br>" +
                     "Length: " + feature.properties.length_km.toFixed(2) + " km<br>" +
                     "Dibuat: " + feature.properties.created_at + "<br>" +
                     "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                    "' width='200' alt=''>";
+                    "' width='200' alt=''>" + "<br>" +
+                    "<form method='POST' action='" + routedelete + "'>" +
+                    '@csrf' + '@method("DELETE")' +
+                    "<button type='submit' class='btn btn-danger btn-sm' onclick='return confirm(`Yakin akan diapus?`)'><i class='fa-solid fa-trash'></i></button>" +
+                    "</form>";
 
                 layer.on({
                     click: function(e) {
@@ -291,14 +308,23 @@
         //GeoJSON Polygons
         var polygon = L.geoJson(null, {
             onEachFeature: function(feature, layer) {
+
+                var routedelete = "{{ route('polygons.destroy', ':id') }}";
+                routedelete = routedelete.replace(':id', feature.properties.id);
+
                 var popupContent = "Nama: " + feature.properties.name + "<br>" + "Luas (Hektar): " + feature
                     .properties
                     .area_hektar.toFixed(2) + "<br>" + "Luas (Km): " + feature.properties
-                    .area_km.toFixed(2) + "br" + "<br>" + "Luas (M): " + feature.properties
-                    .area_m.toFixed(2) + "br" + "Deskripsi: " + feature.properties.description + "<br>" +
+                    .area_km.toFixed(2) + "<br>" + "Luas (M): " + feature.properties
+                    .area_m.toFixed(2) + "<br>" + "Deskripsi: " + feature.properties.description + "<br>" +
                     "Dibuat: " + feature.properties.created_at + "<br>" +
                     "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                    "' width='200' alt=''>";
+                    "' width='200' alt=''>" + "<br>" +
+                    "<form method='POST' action='" + routedelete + "'>" +
+                    '@csrf' + '@method("DELETE")' +
+                    "<button type='submit' class='btn btn-danger btn-sm' onclick='return confirm(`Yakin akan diapus?`)'><i class='fa-solid fa-trash'></i></button>" +
+                    "</form>";
+
                 layer.on({
                     click: function(e) {
                         polygon.bindPopup(popupContent);
@@ -313,5 +339,21 @@
             polygon.addData(data);
             map.addLayer(polygon);
         });
+
+        var baseMaps = {
+            "OpenStreetMap": L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            })
+        };
+
+        var overlayMaps = {
+            "Points": point,
+            "Polylines": polylines,
+            "Polygons": polygon
+        };
+
+        L.control.layers(baseMaps, overlayMaps, {
+            collapsed: false
+        }).addTo(map);
     </script>
 @endsection
