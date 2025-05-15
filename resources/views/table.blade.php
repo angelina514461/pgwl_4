@@ -1,32 +1,34 @@
 @extends('layout.template')
 
 @section('content')
-<table class="table table-striped">
-    <head>
+<div class="class-card">
+
+    <table class="table table-striped">
+    <thead>
         <tr>
             <th>No</th>
-            <th>Nama</th>
-            <th>NIM</th>
-            <th>Kelas</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Image</th>
+            <th>Creaed At</th>
+            <th>Updated At</th>
         </tr>
+    </thead>
+    <tbody>
+        @foreach ($points as $p)
         <tr>
-            <td>1</td>
-            <td>Angel</td>
-            <td>611</td>
-            <td>A</td>
+            <td>{{ $p->id }}</td>
+            <td>{{ $p->name }}</td>
+            <td>{{ $p->description }}</td>
+            <td>
+                <img src="{{ asset('storage/images/' . $p->image) }}" alt=""
+                width="200" title="{{$p ->image}}">
+            </td>
+            <td>{{ $p->created_at }}</td>
+            <td>{{ $p->updated_at }}</td>
         </tr>
-        <tr>
-            <td>2</td>
-            <td>Kaysen</td>
-            <td>612</td>
-            <td>B</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>Ell</td>
-            <td>613</td>
-            <td>A</td>
-        </tr>
-    </head>
+        @endforeach
+    </tbody>
 </table>
+</div>
 @endsection

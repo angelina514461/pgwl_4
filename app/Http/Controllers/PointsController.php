@@ -98,7 +98,12 @@ class PointsController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $data = [
+            'title' => 'Edit Point',
+            'id' => $id,
+        ];
+
+        return view('edit-point', $data);
     }
 
     /**
@@ -106,7 +111,62 @@ class PointsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // Validate request
+        $request->validate(
+        [
+            'name' => 'required|unique:points,name,' . $id,
+            'description' => 'required',
+            'geom_point' => 'required',
+            'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:50',
+        ],
+        [
+            'name.required' => 'Name is required',
+            'name.unique' => 'Name already exists',
+            'description.required' => 'Description is required',
+            'geom_point.required' => 'Geometry point is required',
+        ]
+        );
+
+        //Create images directory if not exists
+        if (!is_dir('storage/images')) {
+            mkdir('./storage/images', 0777);
+         }
+
+         // Get old image file
+         $old_image = $this->points->find($id)->image;
+
+         // Get image file
+         if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $name_image = time() . "_point." . strtolower($image->getClientOriginalExtension());
+            $image->move('storage/images', $name_image);
+
+            // Delete old image file
+            if ($old_image != null) {
+                if (file_exists('./storage/images/' . $old_image)) {
+            unlink('./storage/images/' . $old_image);
+            }
+        }
+          } else {
+            $name_image = $old_image;
+          }
+
+        $data = [
+            'geom' => $request->geom_point,
+            'name' => $request->name,
+            'description' => $request->description,
+            'image' => $name_image,
+        ];
+
+
+
+    // update data
+    if (!$this->points->find($id)->update($data)) {
+        return redirect()->route('map')->with('error', 'Point failed to update');
+    } // proses untuk memasukkan data nya ke dalam tabel kita
+
+    // redirect to map
+    return redirect()->route('map')->with('success', 'Point has been updated');
     }
 
     /**
