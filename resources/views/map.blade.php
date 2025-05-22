@@ -265,7 +265,7 @@
                     "<button type='submit' class='btn btn-danger btn-sm' onclick='return confirm(`Yakin akan diapus?`)'><i class='fa-solid fa-trash'></i></button>" +
                     "</form>" +
                     "</div>" +
-                    "</div>";
+                    "</div>" + "<br>" + "<p>Dibuat: " + feature.properties.user_created + "</p>";
 
                 layer.on({
                     click: function(e) {
@@ -308,7 +308,7 @@
                     "<button type='submit' class='btn btn-danger btn-sm' onclick='return confirm(`Yakin akan diapus?`)'><i class='fa-solid fa-trash'></i></button>" +
                     "</form>"+
                     "</div>" +
-                    "</div>";
+                    "</div>" + "<br>" + "<p>Dibuat: " + feature.properties.user_created + "</p>";
 
                 layer.on({
                     click: function(e) {
@@ -353,7 +353,7 @@
                     "<button type='submit' class='btn btn-danger btn-sm' onclick='return confirm(`Yakin akan diapus?`)'><i class='fa-solid fa-trash'></i></button>" +
                     "</form>"+
                     "</div>" +
-                    "</div>";
+                    "</div>" + "<br>" + "<p>Dibuat: " + feature.properties.user_created + "</p>";
 
                 layer.on({
                     click: function(e) {
