@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\PointsModel;
 use App\Models\PolygonsModel;
 use App\Models\PolylinesModel;
-use Illuminate\Http\Request;
 
 class TableController extends Controller
 {
@@ -15,13 +15,16 @@ class TableController extends Controller
         $this->polylines = new PolylinesModel();
         $this->polygons = new PolygonsModel();
     }
+
     public function index()
     {
-    $data = [
-        'title' => 'Table',
-        'points' => $this->points->all(),
-    ];
+        $data = [
+            'title' => 'Table',
+            'points' => $this->points->all(),
+            'polylines' => $this->polylines->all(),
+            'polygons' => $this->polygons->all(),
+        ];
 
-    return view('table', $data);
+        return view('table', $data);
     }
 }
